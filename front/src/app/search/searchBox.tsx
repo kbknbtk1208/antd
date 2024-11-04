@@ -1,7 +1,8 @@
 import { FC, useEffect, useState } from "react";
 import { Address } from "./regionSearch";
-import { Button, Select } from "antd";
+import { Button, ConfigProvider, Input, Select } from "antd";
 import { motion } from "framer-motion";
+import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 
 type Props = {
   selectedSearchParams: {
@@ -50,82 +51,101 @@ export const SearchBox: FC<Props> = ({
   };
 
   return (
-    <motion.div
-      animate={{
-        height: isScrolling ? "45px" : "fit-content",
-      }}
-      transition={{ duration: styles.animateDuration }}
-      style={{
-        position: "fixed",
-        top: "0px",
-        width: "100%",
-        zIndex: 10,
-        backgroundColor: "#ffffff",
-        gap: isScrolling ? "10px" : "16px",
-        justifyContent: "center",
-        padding: "5px 10px",
+    <ConfigProvider
+      theme={{
+        components: {
+          Input: {
+            activeBorderColor: "#e5e7eb",
+            hoverBorderColor: "#e5e7eb",
+          },
+        },
       }}
     >
       <motion.div
-        animate={{ width: styles.selectBoxWidth }}
-        transition={{ duration: styles.animateDuration }}
-      >
-        <Select
-          open={false}
-          onClick={onClickRegionalSearchSelect}
-          options={regionOption}
-          value={selectedSearchParams.region.id}
-          style={{ width: "100%" }}
-        />
-      </motion.div>
-
-      <motion.div
         animate={{
-          width: styles.selectBoxWidth,
-          x: isScrolling ? "110%" : "0",
-          y: isScrolling ? "-100%" : "0",
-          paddingTop: styles.paddingTop,
+          height: isScrolling ? "45px" : "fit-content",
         }}
         transition={{ duration: styles.animateDuration }}
-      >
-        <Select
-          open={false}
-          onClick={onClickItemNameSearchSelect}
-          value={selectedSearchParams.itemName}
-          style={{ width: "100%" }}
-        />
-      </motion.div>
-
-      <motion.div
-        animate={{
-          width: styles.selectBoxWidth,
-          x: isScrolling ? "220%" : "0",
-          y: isScrolling ? "-200%" : "0",
-          paddingTop: styles.paddingTop,
+        style={{
+          position: "fixed",
+          top: "0px",
+          width: "100%",
+          zIndex: 10,
+          backgroundColor: "#ffffff",
+          gap: isScrolling ? "10px" : "16px",
+          justifyContent: "center",
+          padding: "5px 10px",
         }}
-        transition={{ duration: styles.animateDuration }}
       >
-        <Select style={{ width: "100%" }} />
-      </motion.div>
-
-      <motion.div
-        animate={{
-          opacity: isScrolling ? 0 : 1,
-          y: isScrolling ? "-100px" : "0",
-        }}
-        transition={{ duration: styles.animateDuration - 0.1 }}
-      >
-        <Button
-          style={{
-            backgroundColor: "#000000",
-            color: "#ffffff",
-            width: "100%",
-            marginTop: "16px",
-          }}
+        <motion.div
+          animate={{ width: styles.selectBoxWidth }}
+          transition={{ duration: styles.animateDuration }}
         >
-          検索
-        </Button>
+          <Input
+            prefix={<SearchOutlined />}
+            suffix={<DownOutlined />}
+            onFocus={(e) => e.target.blur()}
+            onClick={onClickRegionalSearchSelect}
+            value={selectedSearchParams.region.name}
+            style={{ width: "100%" }}
+          />
+        </motion.div>
+
+        <motion.div
+          animate={{
+            width: styles.selectBoxWidth,
+            x: isScrolling ? "110%" : "0",
+            y: isScrolling ? "-100%" : "0",
+            paddingTop: styles.paddingTop,
+          }}
+          transition={{ duration: styles.animateDuration }}
+        >
+          <Input
+            prefix={<SearchOutlined />}
+            suffix={<DownOutlined />}
+            onFocus={(e) => e.target.blur()}
+            onClick={onClickItemNameSearchSelect}
+            value={selectedSearchParams.itemName}
+            style={{ width: "100%" }}
+          />
+        </motion.div>
+
+        <motion.div
+          animate={{
+            width: styles.selectBoxWidth,
+            x: isScrolling ? "220%" : "0",
+            y: isScrolling ? "-200%" : "0",
+            paddingTop: styles.paddingTop,
+          }}
+          transition={{ duration: styles.animateDuration }}
+        >
+          <Input
+            onFocus={(e) => e.target.blur()}
+            prefix={<SearchOutlined />}
+            suffix={<DownOutlined />}
+            style={{ width: "100%" }}
+          />
+        </motion.div>
+
+        <motion.div
+          animate={{
+            opacity: isScrolling ? 0 : 1,
+            y: isScrolling ? "-100px" : "0",
+          }}
+          transition={{ duration: styles.animateDuration - 0.1 }}
+        >
+          <Button
+            style={{
+              backgroundColor: "#000000",
+              color: "#ffffff",
+              width: "100%",
+              marginTop: "16px",
+            }}
+          >
+            検索
+          </Button>
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </ConfigProvider>
   );
 };
