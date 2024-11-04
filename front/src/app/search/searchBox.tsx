@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { Address } from "./regionSearch";
-import { Button, Flex, Select, Space, Typography } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { Button, Select } from "antd";
 import { motion } from "framer-motion";
 
 type Props = {
@@ -25,35 +24,11 @@ export const SearchBox: FC<Props> = ({
     },
   ];
 
-  const InScrollingDisplay = (
-    <Flex
-      gap={10}
-      style={{
-        position: "fixed",
-        top: "0px",
-        width: "100%",
-        zIndex: 10,
-        backgroundColor: "#ffffff",
-      }}
-    >
-      <Space>
-        <SearchOutlined />
-        <Typography.Text>{selectedSearchParams.region.name}</Typography.Text>
-      </Space>
-      <Space>
-        <SearchOutlined />
-        <Typography.Text>{selectedSearchParams.itemName}</Typography.Text>
-      </Space>
-    </Flex>
-  );
-
   const [isScrolling, setIsScrolling] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolling(window.scrollY > 0);
-      setScrollY(window.scrollY);
     };
 
     const handleScrollEnd = () => {
@@ -68,12 +43,18 @@ export const SearchBox: FC<Props> = ({
     };
   }, []);
 
+  const styles = {
+    selectBoxWidth: isScrolling ? "30%" : "100%",
+    paddingTop: isScrolling ? "0" : "16px",
+    animateDuration: 0.3,
+  };
+
   return (
     <motion.div
       animate={{
         height: isScrolling ? "45px" : "fit-content",
       }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: styles.animateDuration }}
       style={{
         position: "fixed",
         top: "0px",
@@ -86,8 +67,8 @@ export const SearchBox: FC<Props> = ({
       }}
     >
       <motion.div
-        animate={{ width: isScrolling ? "30%" : "100%" }}
-        transition={{ duration: 0.3 }}
+        animate={{ width: styles.selectBoxWidth }}
+        transition={{ duration: styles.animateDuration }}
       >
         <Select
           open={false}
@@ -97,18 +78,15 @@ export const SearchBox: FC<Props> = ({
           style={{ width: "100%" }}
         />
       </motion.div>
+
       <motion.div
         animate={{
-          width: isScrolling ? "30%" : "100%",
+          width: styles.selectBoxWidth,
           x: isScrolling ? "110%" : "0",
           y: isScrolling ? "-100%" : "0",
-          paddingTop: isScrolling ? "0" : "16px",
+          paddingTop: styles.paddingTop,
         }}
-        transition={{ duration: 0.3 }}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-        }}
+        transition={{ duration: styles.animateDuration }}
       >
         <Select
           open={false}
@@ -117,33 +95,36 @@ export const SearchBox: FC<Props> = ({
           style={{ width: "100%" }}
         />
       </motion.div>
+
       <motion.div
         animate={{
-          width: isScrolling ? "30%" : "100%",
+          width: styles.selectBoxWidth,
           x: isScrolling ? "220%" : "0",
           y: isScrolling ? "-200%" : "0",
-          paddingTop: isScrolling ? "0" : "16px",
+          paddingTop: styles.paddingTop,
         }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: styles.animateDuration }}
       >
         <Select style={{ width: "100%" }} />
       </motion.div>
+
       <motion.div
-        animate={{ opacity: isScrolling ? 0 : 1 }}
-        transition={{ duration: 0.3 }}
+        animate={{
+          opacity: isScrolling ? 0 : 1,
+          y: isScrolling ? "-100px" : "0",
+        }}
+        transition={{ duration: styles.animateDuration - 0.1 }}
       >
-        {!isScrolling && (
-          <Button
-            style={{
-              backgroundColor: "#000000",
-              color: "#ffffff",
-              width: "100%",
-              marginTop: "16px",
-            }}
-          >
-            検索
-          </Button>
-        )}
+        <Button
+          style={{
+            backgroundColor: "#000000",
+            color: "#ffffff",
+            width: "100%",
+            marginTop: "16px",
+          }}
+        >
+          検索
+        </Button>
       </motion.div>
     </motion.div>
   );
