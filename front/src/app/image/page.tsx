@@ -2,8 +2,24 @@
 
 import { get, post } from "@/networkClient";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { GetProp, Upload, UploadProps, Image, Button } from "antd";
-import { useState } from "react";
+import {
+  GetProp,
+  Upload,
+  UploadProps,
+  Image,
+  Button,
+  Carousel,
+  Flex,
+  ConfigProvider,
+  Skeleton,
+  Space,
+  message,
+  NotificationArgsProps,
+  notification,
+  Typography,
+  Alert,
+} from "antd";
+import { ReactNode, useEffect, useState } from "react";
 
 const postImage = (body: { filename: string; image: string }) => {
   post("image", body)
@@ -67,6 +83,62 @@ const ImagePage = () => {
       setImages(img.map((i) => ({ strSrc: i.image_str, id: i.id })));
     });
   };
+
+  useEffect(() => {
+    getAll();
+  }, []);
+
+  const Container = (children: ReactNode) => {
+    return (
+      <div>
+        <Flex
+          justify="center"
+          align="center"
+          style={{
+            backgroundColor: "#666666",
+            padding: "30px",
+          }}
+        >
+          {children}
+        </Flex>
+      </div>
+    );
+  };
+
+  const [api, contextHolder] = notification.useNotification();
+
+  type NotificationPlacement = NotificationArgsProps["placement"];
+  const openNotification = (placement: NotificationPlacement) => {
+    notification.open({
+      message: (
+        <Flex align="center" justify="center" style={{ width: "100%" }}>
+          <Typography.Text style={{ color: "#ffffff" }}>
+            {`Notification ${placement}`}
+          </Typography.Text>
+        </Flex>
+      ),
+      style: {
+        display: "flex",
+        height: "40px",
+        backgroundColor: "#111111",
+        justifyContent: "center",
+        alignContent: "center",
+        padding: "0",
+      },
+      placement,
+      duration: null,
+    });
+  };
+
+  const [showNotify, setShowNotify] = useState(false);
+  const onClickToastButton = () => {
+    notification.destroy();
+    openNotification("bottom");
+    // setShowNotify(true);
+  };
+
+  const destroy = () => {};
+
   return (
     <div>
       <Upload name="avatar" listType="picture-circle" onChange={handleChange}>
@@ -80,11 +152,53 @@ const ImagePage = () => {
       <br></br>
       <p>画像一覧</p>
       <Button onClick={getAll}>取得</Button>
-      {images.map((img) => {
-        console.log(img);
+      <ConfigProvider
+        theme={{
+          components: {
+            Carousel: {
+              dotHeight: "10px",
+              dotWidth: "10px",
+              dotActiveWidth: "10px",
+            },
+          },
+        }}
+      >
+        <Carousel arrows>
+          {images.length === 0 &&
+            Container(
+              <Skeleton.Image
+                active
+                style={{ height: "300px", width: "200px" }}
+              />
+            )}
+          {images.map((img) => {
+            console.log(img);
 
-        return <Image src={img.strSrc} key={img.id} alt="a" />;
-      })}
+            return Container(
+              <Image
+                // preview={false}
+                src={img.strSrc}
+                alt="a"
+                height={"300px"}
+              />
+            );
+          })}
+        </Carousel>
+      </ConfigProvider>
+      <Space>
+        <Button onClick={onClickToastButton}>クリック</Button>
+        <Button onClick={destroy}>削除</Button>
+      </Space>
+
+      {showNotify && (
+        <Alert
+          message="Warning Text Warning Text Warning TextW arning Text Warning Text Warning TextWarning Text"
+          type="success"
+          closable
+          banner
+          onClose={() => null}
+        />
+      )}
     </div>
   );
 };
